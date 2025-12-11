@@ -154,20 +154,17 @@
 )
 
 ;; Clarity 4: Get contract verification hash
-;; Note: Uncomment when deploying with Clarity 4 support (requires Clarinet with Clarity 4)
-;; (define-read-only (get-nft-contract-verification)
-;;   (ok {
-;;     contract-hash: (contract-hash? .achievement-nft),
-;;     contract-principal: (as-contract tx-sender),
-;;     current-time: stacks-block-time
-;;   })
-;; )
+(define-read-only (get-nft-contract-verification)
+  (ok {
+    contract-hash: (contract-hash? .achievement-nft),
+    current-time: stacks-block-time
+  })
+)
 
-;; Alternative verification info (Clarity 3 compatible)
+;; Alternative verification info
 (define-read-only (get-nft-contract-info)
   (ok {
-    contract-principal: (as-contract tx-sender),
-    current-burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
+    current-time: stacks-block-time,
     total-tokens: (var-get token-id-nonce)
   })
 )
@@ -348,13 +345,13 @@
       (merge stats { total-stx-earned: new-total })
     )
     
-    ;; Clarity 4: Log STX earned increment (using burn-block-height for Clarity 3 compatibility)
+    ;; Clarity 4: Log STX earned increment
     (print {
       event: "stx-earned-tracked",
       user: user,
       amount: amount,
       total-earned: new-total,
-      burn-block: burn-block-height  ;; Clarity 4: Replace with stacks-block-time
+      timestamp: stacks-block-time
     })
     
     ;; Auto-mint STX earned achievement (100 STX = 100,000,000 microSTX)

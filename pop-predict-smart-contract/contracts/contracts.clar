@@ -193,13 +193,11 @@
 )
 
 ;; Clarity 4: Get contract hash for verification
-;; Note: Uncomment when deploying with Clarity 4 support (requires Clarinet with Clarity 4)
-;; (define-read-only (get-contract-verification)
-;;   (ok {
-;;     contract-hash: (contract-hash? .pop-predict),
-;;     contract-principal: (as-contract tx-sender)
-;;   })
-;; )
+(define-read-only (get-contract-verification)
+  (ok {
+    contract-hash: (contract-hash? .pop-predict)
+  })
+)
 
 ;; Clarity 4: Get market info with readable display using to-ascii
 ;; Note: Uncomment when deploying with Clarity 4 support (requires to-ascii? function)
@@ -402,14 +400,14 @@
       (merge market { total-pool: (+ (get total-pool market) stake-amount) })
     )
     
-    ;; Clarity 4: Log stake event (using burn-block-height for Clarity 3 compatibility)
+    ;; Clarity 4: Log stake event with timestamp
     (print {
       event: "stake-placed",
       user: tx-sender,
       market-id: market-id,
       outcome-index: outcome-index,
       amount: stake-amount,
-      burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
+      timestamp: stacks-block-time,
       block-height: stacks-block-height
     })
     
