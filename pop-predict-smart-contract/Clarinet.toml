@@ -5,10 +5,16 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
-[contracts.contracts]
+[contracts.pop-predict]
 path = 'contracts/contracts.clar'
-clarity_version = 3
-epoch = 'latest'
+clarity_version = 4
+epoch = '3.1'
+
+[contracts.achievement-nft]
+path = 'contracts/achievement-nft.clar'
+clarity_version = 4
+epoch = '3.1'
+
 [repl.analysis]
 passes = ['check_checker']
 
