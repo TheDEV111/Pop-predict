@@ -351,7 +351,7 @@
     (asserts! (<= stake-amount MAX-STAKE) ERR-STAKE-TOO-HIGH)
     
     ;; Transfer STX from user to contract
-    (unwrap! (stx-transfer? stake-amount tx-sender (as-contract tx-sender)) ERR-TRANSFER-FAILED)
+    (try! (stx-transfer? stake-amount tx-sender (as-contract tx-sender)))
     
     ;; Update outcome pool
     (map-set outcome-pools
