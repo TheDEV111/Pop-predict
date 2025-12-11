@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { AppConfig, UserSession, showConnect, AuthOptions } from '@stacks/connect';
+import { AppConfig, UserSession } from '@stacks/connect';
 import { APP_NAME, APP_ICON, NETWORK_TYPE } from '@/lib/stacks-config';
 
 interface User {
@@ -53,11 +53,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const connectWallet = useCallback(() => {
+  const connectWallet = useCallback(async () => {
     setError(null);
     
     try {
-      const authOptions: AuthOptions = {
+      // Dynamic import to ensure client-side only execution
+      const connectModule = await import('@stacks/connect');
+      console.log('Connect module loaded:', connectModule);
+      
+      // Try different possible exports
+      const showConnectFn = connectModule.showConnect || 
+                           connectModule.default?.showConnect || 
+                           connectModule.authenticate ||
+                           connectModule.default?.authenticate;
+      
+      if (!showConnectFn || typeof showConnectFn !== 'function') {
+        console.error('No valid connect function found. Available exports:', Object.keys(connectModule));
+        setError('Wallet connection not available');
+        return;
+      }
+      
+      showConnectFn({
         appDetails: {
           name: APP_NAME,
           icon: window.location.origin + APP_ICON,
@@ -95,10 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setError(null);
         },
         userSession,
-      };
-
-      console.log('Attempting to show connect modal with options:', authOptions);
-      showConnect(authOptions);
+      });
     } catch (err) {
       console.error('Error showing connect modal:', err);
       setError('Failed to open wallet connection modal');

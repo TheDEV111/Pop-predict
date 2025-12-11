@@ -30,7 +30,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur-md shadow-sm">
+    <nav className="sticky top-0 z-50 w-full border-b backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -117,7 +117,7 @@ export default function Navbar() {
           ) : (
             <Button 
               onClick={connectWallet} 
-              className="bg-stacks-orange hover:bg-stacks-orange-dark text-white font-semibold shadow-md"
+              className="bg-stacks-orange hover:bg-stacks-orange-dark text-black font-semibold shadow-md py-3 px-8 hover:shadow-lg transition-all rounded-lg"
               size="default"
             >
               <Wallet className="h-4 w-4 mr-2" />
