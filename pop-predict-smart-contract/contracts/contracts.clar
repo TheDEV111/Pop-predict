@@ -350,8 +350,8 @@
     (asserts! (>= stake-amount MIN-STAKE) ERR-STAKE-TOO-LOW)
     (asserts! (<= stake-amount MAX-STAKE) ERR-STAKE-TOO-HIGH)
     
-    ;; Transfer STX from user to contract
-    (try! (stx-transfer? stake-amount tx-sender (as-contract tx-sender)))
+    ;; Transfer STX from user to contract (using Clarity 4's current-contract)
+    (unwrap! (stx-transfer? stake-amount tx-sender current-contract) ERR-TRANSFER-FAILED)
     
     ;; Update outcome pool
     (map-set outcome-pools
@@ -453,9 +453,9 @@
     (asserts! (>= stacks-block-height resolution-date) (err u122))
     (asserts! (< winning-outcome-index outcome-count) ERR-INVALID-OUTCOME)
     
-    ;; Transfer platform fee to treasury
+    ;; Transfer platform fee to treasury (using Clarity 4's current-contract)
     (if (> fee-amount u0)
-      (unwrap! (as-contract (stx-transfer? fee-amount tx-sender (var-get treasury-address))) ERR-TRANSFER-FAILED)
+      (unwrap! (stx-transfer? fee-amount current-contract (var-get treasury-address)) ERR-TRANSFER-FAILED)
       true
     )
     
@@ -513,8 +513,8 @@
       (merge user-stake { claimed: true })
     )
     
-    ;; Transfer winnings
-    (unwrap! (as-contract (stx-transfer? user-winnings tx-sender tx-sender)) ERR-TRANSFER-FAILED)
+    ;; Transfer winnings (using Clarity 4's current-contract)
+    (unwrap! (stx-transfer? user-winnings current-contract tx-sender) ERR-TRANSFER-FAILED)
     
     ;; Clarity 4: Log claim event (using burn-block-height for Clarity 3 compatibility)
     (print {
@@ -569,8 +569,8 @@
       (merge user-stake { claimed: true })
     )
     
-    ;; Refund full amount
-    (unwrap! (as-contract (stx-transfer? user-amount tx-sender tx-sender)) ERR-TRANSFER-FAILED)
+    ;; Refund full amount (using Clarity 4's current-contract)
+    (unwrap! (stx-transfer? user-amount current-contract tx-sender) ERR-TRANSFER-FAILED)
     
     (ok user-amount)
   )
