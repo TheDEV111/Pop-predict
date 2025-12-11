@@ -153,6 +153,25 @@
   (ok (get-user-stats-or-default user))
 )
 
+;; Clarity 4: Get contract verification hash
+;; Note: Uncomment when deploying with Clarity 4 support (requires Clarinet with Clarity 4)
+;; (define-read-only (get-nft-contract-verification)
+;;   (ok {
+;;     contract-hash: (contract-hash? .achievement-nft),
+;;     contract-principal: (as-contract tx-sender),
+;;     current-time: stacks-block-time
+;;   })
+;; )
+
+;; Alternative verification info (Clarity 3 compatible)
+(define-read-only (get-nft-contract-info)
+  (ok {
+    contract-principal: (as-contract tx-sender),
+    current-burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
+    total-tokens: (var-get token-id-nonce)
+  })
+)
+
 (define-read-only (get-achievement-type-by-token (token-id uint))
   (let
     (
@@ -234,6 +253,16 @@
     ;; Increment token ID
     (var-set token-id-nonce (+ new-token-id u1))
     
+    ;; Clarity 4: Log achievement mint event (using burn-block-height for Clarity 3 compatibility)
+    (print {
+      event: "achievement-minted",
+      user: user,
+      achievement-type: achievement-type,
+      token-id: new-token-id,
+      burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
+      block-height: stacks-block-height
+    })
+    
     (ok new-token-id)
   )
 )
@@ -255,6 +284,14 @@
       (merge stats { total-predictions: new-total })
     )
     
+    ;; Clarity 4: Log prediction increment (using burn-block-height for Clarity 3 compatibility)
+    (print {
+      event: "prediction-tracked",
+      user: user,
+      total-predictions: new-total,
+      burn-block: burn-block-height  ;; Clarity 4: Replace with stacks-block-time
+    })
+    
     ;; Auto-mint first prediction achievement
     (if (is-eq new-total u1)
       (mint-achievement user ACHIEVEMENT-FIRST-PREDICTION)
@@ -275,6 +312,14 @@
       { user: user }
       (merge stats { total-wins: new-total })
     )
+    
+    ;; Clarity 4: Log win increment (using burn-block-height for Clarity 3 compatibility)
+    (print {
+      event: "win-tracked",
+      user: user,
+      total-wins: new-total,
+      burn-block: burn-block-height  ;; Clarity 4: Replace with stacks-block-time
+    })
     
     ;; Auto-mint win achievements
     (if (is-eq new-total u1)
@@ -302,6 +347,15 @@
       { user: user }
       (merge stats { total-stx-earned: new-total })
     )
+    
+    ;; Clarity 4: Log STX earned increment (using burn-block-height for Clarity 3 compatibility)
+    (print {
+      event: "stx-earned-tracked",
+      user: user,
+      amount: amount,
+      total-earned: new-total,
+      burn-block: burn-block-height  ;; Clarity 4: Replace with stacks-block-time
+    })
     
     ;; Auto-mint STX earned achievement (100 STX = 100,000,000 microSTX)
     (if (>= new-total u100000000)

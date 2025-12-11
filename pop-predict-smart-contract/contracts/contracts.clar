@@ -193,11 +193,45 @@
 )
 
 ;; Clarity 4: Get contract hash for verification
-(define-read-only (get-contract-verification)
-  (ok {
-    contract-hash: (contract-hash? .pop-predict),
-    contract-principal: (as-contract tx-sender)
-  })
+;; Note: Uncomment when deploying with Clarity 4 support (requires Clarinet with Clarity 4)
+;; (define-read-only (get-contract-verification)
+;;   (ok {
+;;     contract-hash: (contract-hash? .pop-predict),
+;;     contract-principal: (as-contract tx-sender)
+;;   })
+;; )
+
+;; Clarity 4: Get market info with readable display using to-ascii
+;; Note: Uncomment when deploying with Clarity 4 support (requires to-ascii? function)
+;; (define-read-only (get-market-display-info (market-id uint))
+;;   (let
+;;     (
+;;       (market (unwrap! (get-market market-id) ERR-MARKET-NOT-FOUND))
+;;     )
+;;     (ok {
+;;       market-id-str: (unwrap! (to-ascii? market-id) (err u999)),
+;;       state: (get state market),
+;;       total-pool: (get total-pool market),
+;;       current-time: stacks-block-time,
+;;       current-block: stacks-block-height
+;;     })
+;;   )
+;; )
+
+;; Alternative market display info without to-ascii (Clarity 3 compatible)
+(define-read-only (get-market-display-info (market-id uint))
+  (let
+    (
+      (market (unwrap! (get-market market-id) ERR-MARKET-NOT-FOUND))
+    )
+    (ok {
+      market-id: market-id,
+      state: (get state market),
+      total-pool: (get total-pool market),
+      current-burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
+      current-block: stacks-block-height
+    })
+  )
 )
 
 ;; ============================================
@@ -283,12 +317,12 @@
       }
     )
     
-    ;; Clarity 4: Log market creation with timestamp
+    ;; Clarity 4: Log market creation event (using burn-block-height for Clarity 3 compatibility)
     (print {
       event: "market-created",
       market-id: new-market-id,
       creator: tx-sender,
-      timestamp: stacks-block-time,
+      burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
       block-height: stacks-block-height
     })
     
@@ -368,14 +402,14 @@
       (merge market { total-pool: (+ (get total-pool market) stake-amount) })
     )
     
-    ;; Clarity 4: Log stake event with timestamp
+    ;; Clarity 4: Log stake event (using burn-block-height for Clarity 3 compatibility)
     (print {
       event: "stake-placed",
       user: tx-sender,
       market-id: market-id,
       outcome-index: outcome-index,
       amount: stake-amount,
-      timestamp: stacks-block-time,
+      burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
       block-height: stacks-block-height
     })
     
@@ -436,14 +470,14 @@
       })
     )
     
-    ;; Clarity 4: Log resolution event with timestamp
+    ;; Clarity 4: Log resolution event (using burn-block-height for Clarity 3 compatibility)
     (print {
       event: "market-resolved",
       market-id: market-id,
       winning-outcome: winning-outcome-index,
       total-pool: total-pool,
       fee-collected: fee-amount,
-      timestamp: stacks-block-time,
+      burn-block: burn-block-height,  ;; Clarity 4: Replace with stacks-block-time
       resolved-by: tx-sender
     })
     
@@ -484,13 +518,13 @@
     ;; Transfer winnings
     (unwrap! (as-contract (stx-transfer? user-winnings tx-sender tx-sender)) ERR-TRANSFER-FAILED)
     
-    ;; Clarity 4: Log claim event with timestamp
+    ;; Clarity 4: Log claim event (using burn-block-height for Clarity 3 compatibility)
     (print {
       event: "winnings-claimed",
       user: tx-sender,
       market-id: market-id,
       amount: user-winnings,
-      timestamp: stacks-block-time
+      burn-block: burn-block-height  ;; Clarity 4: Replace with stacks-block-time
     })
     
     (ok user-winnings)

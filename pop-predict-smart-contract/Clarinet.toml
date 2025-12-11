@@ -7,13 +7,13 @@ cache_dir = './.cache'
 requirements = []
 [contracts.pop-predict]
 path = 'contracts/contracts.clar'
-clarity_version = 4
-epoch = '3.1'
+clarity_version = 3
+epoch = 'latest'
 
 [contracts.achievement-nft]
 path = 'contracts/achievement-nft.clar'
-clarity_version = 4
-epoch = '3.1'
+clarity_version = 3
+epoch = 'latest'
 
 [repl.analysis]
 passes = ['check_checker']
