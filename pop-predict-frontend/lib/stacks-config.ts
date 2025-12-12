@@ -1,17 +1,17 @@
 import { STACKS_TESTNET, STACKS_MAINNET } from '@stacks/network';
 
-// Network configuration
-export const NETWORK = STACKS_TESTNET;
-export const NETWORK_TYPE = 'testnet';
+// Network configuration - MAINNET DEPLOYMENT
+export const NETWORK = STACKS_MAINNET;
+export const NETWORK_TYPE = 'mainnet';
 
-// Contract addresses (from deployment)
+// Contract addresses (deployed to mainnet on Dec 12, 2025)
 export const CONTRACTS = {
   popPredict: {
-    address: 'STVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2BKDND68',
+    address: 'SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F',
     name: 'pop-predict',
   },
   achievementNFT: {
-    address: 'STVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2BKDND68',
+    address: 'SPVQ61FEWR6M4HVAT3BNE07D4BNW6A1C2ACCNQ6F',
     name: 'achievement-nft',
   },
 } as const;
@@ -21,7 +21,7 @@ export const POP_PREDICT_CONTRACT = `${CONTRACTS.popPredict.address}.${CONTRACTS
 export const ACHIEVEMENT_NFT_CONTRACT = `${CONTRACTS.achievementNFT.address}.${CONTRACTS.achievementNFT.name}`;
 
 // API endpoints
-export const STACKS_API = 'https://api.testnet.hiro.so';
+export const STACKS_API = 'https://api.hiro.so';
 
 // App configuration
 export const APP_NAME = 'PopPredict';
