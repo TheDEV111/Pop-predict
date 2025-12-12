@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import MarketCard from '@/components/MarketCard';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight, TrendingUp, Sparkles } from 'lucide-react';
 
 // Mock data - will be replaced with real contract data
 const FEATURED_MARKETS = [
@@ -44,31 +45,60 @@ const FEATURED_MARKETS = [
 
 export default function FeaturedMarkets() {
   return (
-    <section className="py-16 md:py-20 bg-white">
-      <div className="container mx-auto px-4">
+    <section className="relative py-20 md:py-28 bg-gradient-to-br from-white via-orange-50/30 to-white overflow-hidden">
+      {/* Decorative Background */}
+      <div className="absolute inset-0 bg-grid-black/[0.02] bg-[size:32px_32px]" />
+      <div className="absolute top-20 left-0 w-96 h-96 bg-stacks-orange/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+      
+      <div className="container relative mx-auto px-4">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="max-w-4xl mx-auto text-center mb-14 space-y-6">
+          <Badge className="bg-stacks-orange/10 text-stacks-orange hover:bg-stacks-orange/20 text-sm px-4 py-2">
+            <TrendingUp className="h-4 w-4 mr-2 inline" />
+            Trending Now
+          </Badge>
+          
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-stacks-orange to-gray-900 bg-clip-text text-transparent">
             Featured Markets
           </h2>
-          <p className="text-lg text-gray-600">
-            Explore trending prediction markets and place your bets on entertainment outcomes
+          
+          <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto">
+            Join the hottest prediction markets and bet on entertainment outcomes
           </p>
+
+          {/* Quick Stats */}
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4">
+            <div className="flex items-center gap-2 text-gray-600">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="font-medium">24 Active Markets</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Sparkles className="h-4 w-4 text-stacks-orange" />
+              <span className="font-medium">450K STX in Pools</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <TrendingUp className="h-4 w-4 text-stacks-orange" />
+              <span className="font-medium">1.2K+ Active Bettors</span>
+            </div>
+          </div>
         </div>
 
         {/* Markets Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {FEATURED_MARKETS.map((market) => (
-            <MarketCard key={market.id} market={market} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+          {FEATURED_MARKETS.map((market, index) => (
+            <div key={market.id} className="animate-in fade-in slide-in-from-bottom-4" style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}>
+              <MarketCard market={market} featured={index === 0} />
+            </div>
           ))}
         </div>
 
         {/* View All Button */}
         <div className="text-center">
-          <Button asChild size="lg" className="bg-gradient-to-r from-stacks-orange to-stacks-orange-dark hover:opacity-90">
+          <Button asChild size="lg" className="bg-stacks-orange hover:bg-stacks-orange-dark text-white shadow-lg hover:shadow-xl transition-all h-14 px-10 text-lg font-bold group">
             <Link href="/markets">
               View All Markets
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </div>
